@@ -23,7 +23,7 @@ $(document).ready(function () {
 
                     var data = JSON.parse(resp);
 
-                    console.log(data);
+                    // console.log(data);
 
                     if ( data == "small" ) {
                         alert("Too small number for year!");
