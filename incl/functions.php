@@ -33,7 +33,7 @@ function group_by_month($holidays) {
         $name = '';
         foreach ($holiday->name as $key => $value) {
             if ( $value->lang == "en" ) {
-                $name = $value->text . '(' . date('jS, l', $time) .  ')';
+                $name = $value->text . " (" . date('jS, l', $time) .  ")";
                 break;
             }
         }
@@ -107,17 +107,15 @@ function is_weekend($month_name, $time, $grouped_extra_workdays) {
     }
 
     if ( !empty($grouped_extra_workdays) && isset($grouped_extra_workdays[$month_name]) ) {
-        // foreach ($grouped_extra_workdays as $month_name => $extra_workday_group) {
-            foreach ( $grouped_extra_workdays[$month_name] as $workday ) {
-                if ( $status ) {
-                    $workday_date = strtotime(get_formated_date($workday));
-                    if ( $time == $workday_date ) {
-                        $status = false;
-                        break;
-                    }
+        foreach ( $grouped_extra_workdays[$month_name] as $workday ) {
+            if ( $status ) {
+                $workday_date = strtotime(get_formated_date($workday));
+                if ( $time == $workday_date ) {
+                    $status = false;
+                    break;
                 }
             }
-        // }
+        }
     }
 
     return $status;

@@ -35,12 +35,16 @@ $(document).ready(function () {
 
                     $(".results").empty();
 
-                    $(".results").append("<hr/><p>Holiday count: " + data.public_holidays_count + "</p>");
+                    if ( !$.isEmptyObject(data.public_holidays) ) {
 
-                    var today = data.is_today_holiday ? 'Holiday' : (data.is_today_workday ? 'Workday' : data.weekday_of_today)
-                    $(".results").append("<p>Today: " + today + "</p>");
+                        $(".results").append("<hr/><p><u>Holiday count:</u> " + data.public_holidays_count + "</p>");
 
-                    $(".results").append("<p>Maximum number of free days (incl. holidays + weekend) in a row: " + data.free_days_in_row_count + "</p><hr/>");
+                        var today = data.is_today_holiday ? 'Holiday' : (data.is_today_workday ? 'Workday' : data.weekday_of_today)
+                        $(".results").append("<p><u>Today:</u> " + today + "</p>");
+
+                        $(".results").append("<hr/><p><u>Maximum number of free days in a row:</u> " + data.free_days_in_row_count + "<br/><small>(incl. holidays + weekend)</small></p><hr/>");
+
+                    }
 
                     if ( data.public_holidays.length == 0 ) {
 
@@ -48,7 +52,7 @@ $(document).ready(function () {
 
                     } else {
 
-                        $(".results").append("<ul></ul>");
+                        $(".results").append('<ul class="list-unstyled"></ul>');
 
                         var holidayItem = "";
                         $.each(data.public_holidays, function (key, holiday) {
@@ -56,7 +60,7 @@ $(document).ready(function () {
                             $.each(holiday, function (subkey, holidayName) {
                                 days += "<li>" + holidayName + "</li>";
                             });
-                            holidayItem += "<li>" + key + "<ul>" + days + "</ul></li>";
+                            holidayItem += "<li><b>" + key + "</b><ul>" + days + "</ul></li>";
                         });
                         $(".results > ul").append(holidayItem);
                     }
