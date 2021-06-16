@@ -5,60 +5,68 @@ $(document).ready(function () {
 
         $(".results").fadeOut(0);
 
-        $.ajax({
-            type: "POST",
-            url: "index.php",
-            data: {
-                "get_holidays": true,
-                "country": $("select").val(),
-                "year": $("input").val()
-            },
-            success: function (resp) {
+        if ( $("select").val().length == 0 ) {
+            alert("Please select a country!");
+        } else if ( $("input").val().length == 0 ) {
+            alert("Please enter a year!");
+        } else {
 
-                var data = JSON.parse(resp);
+            $.ajax({
+                type: "POST",
+                url: "index.php",
+                data: {
+                    "get_holidays": true,
+                    "country": $("select").val(),
+                    "year": $("input").val()
+                },
+                success: function (resp) {
 
-                console.log(data);
+                    var data = JSON.parse(resp);
 
-                if ( data == "small" ) {
-                    alert("Too small number for year!");
-                }
+                    console.log(data);
 
-                if ( data == "large" ) {
-                    alert("Too large number for year!");
-                }
+                    if ( data == "small" ) {
+                        alert("Too small number for year!");
+                    }
 
-                $(".results").empty();
+                    if ( data == "large" ) {
+                        alert("Too large number for year!");
+                    }
 
-                $(".results").append("<hr/><p>Holiday count: " + data.public_holidays_count + "</p>");
+                    $(".results").empty();
 
-                var today = data.is_today_holiday ? 'Holiday' : (data.is_today_workday ? 'Workday' : data.weekday_of_today)
-                $(".results").append("<p>Today: " + today + "</p>");
+                    $(".results").append("<hr/><p>Holiday count: " + data.public_holidays_count + "</p>");
 
-                $(".results").append("<p>Maximum number of free days (incl. holidays + weekend) in a row: " + data.free_days_in_row_count + "</p><hr/>");
+                    var today = data.is_today_holiday ? 'Holiday' : (data.is_today_workday ? 'Workday' : data.weekday_of_today)
+                    $(".results").append("<p>Today: " + today + "</p>");
 
-                if ( data.public_holidays.length == 0 ) {
+                    $(".results").append("<p>Maximum number of free days (incl. holidays + weekend) in a row: " + data.free_days_in_row_count + "</p><hr/>");
 
-                    $(".results").append("There are no public holidays for this country!");
+                    if ( data.public_holidays.length == 0 ) {
 
-                } else {
+                        $(".results").append("There are no public holidays for this country!");
 
-                    $(".results").append("<ul></ul>");
+                    } else {
 
-                    var holidayItem = "";
-                    $.each(data.public_holidays, function (key, holiday) {
-                        var days = "";
-                        $.each(holiday, function (subkey, holidayName) {
-                            days += "<li>" + holidayName + "</li>";
+                        $(".results").append("<ul></ul>");
+
+                        var holidayItem = "";
+                        $.each(data.public_holidays, function (key, holiday) {
+                            var days = "";
+                            $.each(holiday, function (subkey, holidayName) {
+                                days += "<li>" + holidayName + "</li>";
+                            });
+                            holidayItem += "<li>" + key + "<ul>" + days + "</ul></li>";
                         });
-                        holidayItem += "<li>" + key + "<ul>" + days + "</ul></li>";
-                    });
-                    $(".results > ul").append(holidayItem);
-                }
+                        $(".results > ul").append(holidayItem);
+                    }
 
-                $(".results").fadeIn(400);
+                    $(".results").fadeIn(400);
 
-            },
-        });
+                },
+            });
+
+        }
 
     });
 });

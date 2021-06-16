@@ -104,47 +104,65 @@
 ?>
 
 <!doctype html>
-<html>
-    <head></head>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Mediapark PHP Assignment</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    </head>
     <body>
-        <h1>PHP Test MP</h1>
+        <section class="container">
 
-        <form method="post" enctype="multipart/form-data">
-            <label for="year-input">Year</label>
-            <input id="year-input" type="number" min="2011" step="1" name="year" />
+            <h1>Mediapark PHP Assignment</h1>
 
-            <?php
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL,
-                    "https://kayaposoft.com/enrico/json/v2.0/?action=getSupportedCountries"
-                );
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        
-                $countries = (Object) json_decode(curl_exec($ch));
-                curl_close($ch);
-            ?>
+            <form method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="year-input">Year</label>
+                    <input id="year-input" type="number" class="form-control" placeholder="Year" min="2011" step="1" name="year" value="<?php echo date("Y"); ?>">
+                </div>
 
-            <label for="country-select">Country</label>
-            <select id="country-select" name="country">
                 <?php
-                    $index = 0;
-                    foreach ($countries as $key => $country) {
-                        if ( $index == 0 ) {
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL,
+                        "https://kayaposoft.com/enrico/json/v2.0/?action=getSupportedCountries"
+                    );
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            
+                    $countries = (Object) json_decode(curl_exec($ch));
+                    curl_close($ch);
                 ?>
-                            <option value="">Select</option>    
-                <?php
-                        }
-                ?>
-                        <option value="<?php echo $country->countryCode; ?>"><?php echo $country->fullName; ?></option>
-                <?php
-                    $index++; }
-                ?>
-            </select>
 
-            <button type="submit">Search</button>
-        </form>
+                <div class="form-group">
+                    <label for="country-select">Country</label>
+                    <select id="country-select" class="form-control" name="country">
+                        <?php
+                            $index = 0;
+                            foreach ($countries as $key => $country) {
+                                if ( $index == 0 ) {
+                        ?>
+                                    <option value="">Select</option>    
+                        <?php
+                                }
+                        ?>
+                                <option value="<?php echo $country->countryCode; ?>"><?php echo $country->fullName; ?></option>
+                        <?php
+                            $index++; }
+                        ?>
+                    </select>
+                </div>
 
-        <div class="results"></div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+
+            <div class="results"></div>
+
+        </section>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
         <script src="js/script.js"></script>
