@@ -3,12 +3,6 @@
     require_once 'incl/helpers.php';
     require_once 'incl/functions.php';
 
-    session_start();
-
-    if ( !isset($_SESSION['id']) && empty($_SESSION['id']) ) {
-        $_SESSION['id'] = uniqid();
-    }
-
     if ( isset($_POST['get_holidays']) ) {
 
         $return = array();
@@ -30,7 +24,7 @@
                 exit(json_encode("large", JSON_PRETTY_PRINT));
             }
 
-            $filename = $_SESSION['id'] . "/" . $_POST['year'] . "-" . $_POST['country'] . ".txt";
+            $filename = "data/" . $_POST['year'] . "-" . $_POST['country'] . ".txt";
 
             if ( file_exists($filename) ) {
 
@@ -81,8 +75,8 @@
 
             /* ******** */
 
-            if ( !file_exists($_SESSION['id']) ) {
-                mkdir($_SESSION['id'], 0777, true);
+            if ( !file_exists('holidays') ) {
+                mkdir('holidays', 0777, true);
             }
 
             if ( !file_exists($filename) ) {
