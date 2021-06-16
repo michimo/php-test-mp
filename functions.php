@@ -136,60 +136,33 @@ function free_day_row_count($all_holidays, $year) {
     $free_days_in_row = 0;
     foreach ($grouped_holidays as $month_name => $holiday_group) {
 
-        $day_of_month = get_time_by_month_name($month_name, $year); // first day
+        $day_of_month = get_time_by_month_name($month_name, $year); // first day of month
         $days_in_month = date("t", $day_of_month);
 
-        // print_r($month_name . ": " . $days_in_month . "<br>");
-
         $free_day_group = array();
-        for ($i = 0; $i < $days_in_month; $i++) {
-
-            // print_r($i . "<br>");
+        for ($i = 0; $i < $days_in_month; $i++) { // go through each day of month
             
             $prev_day = strtotime('-1 day', $day_of_month);
             $next_day = strtotime('+1 day', $day_of_month);
 
             $is_public_holiday = is_public_holiday($day_of_month, $holiday_group);
-            $is_weekend = is_weekend($month_name, $day_of_month, $grouped_extra_working_days);
-
-            // print_r("day: " . date('F jS, l', $day_of_month)."<br>");
+            $is_weekend = is_weekend($month_name, $day_of_month, $grouped_extra_working_days); // extra working days are removed and don't count as weekend
 
             if ( $is_public_holiday || $is_weekend ) {
 
-                // print_r("is: " . date('F jS, l', $day_of_month)."<br>");
-
                 if ( empty($free_day_group) ) {
                     $free_day_group[] = $day_of_month;
-                    // print_r("empty: " . date('F jS, l', $day_of_month)."<br>");
                 } else {
                     $prev_free_day = $free_day_group[count($free_day_group)-1];
+                    // check if days are going in sequence
                     if ( $prev_day == $prev_free_day ) {
                         $free_day_group[] = $day_of_month;
-                        // print_r("prev_day: " . date('F jS, l', $day_of_month)."<br>");
                     } else {
-                        // $free_day_array[$month_name] = $free_day_group;
-                        // $free_day_group = array();
-                        // if ( $free_days_in_row == 0 ) {
-                        //     $free_days_in_row = count($free_day_group);
-                        // } else
-
-                        // print_r($month_name . "<br>");
-                        //     print_r($free_day_group);
-                        //     print_r("<br>");
-
                         if ( $free_days_in_row < count($free_day_group) ) {
-
-                            // print_r($month_name . "<br>");
-                            // print_r($free_day_group);
-                            // print_r("<br>");
-
                             $free_days_in_row = count($free_day_group);
                         }
-                        // print_r(date('F jS, l', $day_of_month)."<br>");
-                        // print_r("---<br>");
-                        $free_day_group = array();
+                        $free_day_group = array(); // restart the free day array
                         $free_day_group[] = $day_of_month;
-                        // print_r("start: " . date('F jS, l', $day_of_month)."<br>");
                     }
                 }
 
@@ -198,111 +171,12 @@ function free_day_row_count($all_holidays, $year) {
             $day_of_month = $next_day;
         }
 
+        // if we have reached end of month and the free day array still has elements then check it
         if ( !empty($free_day_group) ) {
             if ( $free_days_in_row < count($free_day_group) ) {
-
-                // print_r($month_name . "<br>");
-                // print_r($free_day_group);
-                // print_r("<br>");
-
                 $free_days_in_row = count($free_day_group);
             }
         }
-
-        // print_r("---<br>");
-        // print_r("---<br>");
-
-        // break;
-
-        // $row_count = 0;
-        // $pointer = new stdClass();
-        // foreach ($holiday_group as $single_holiday) {
-
-        //     $holiday_date = strtotime(get_formated_date($single_holiday));
-        //     // $weekday_of_holiday = $single_holiday->date->dayOfWeek; 
-
-        //     if ( empty($pointer) ) {
-        //         // if ( $single_holiday->holidayType != 'extra_working_day' ) {
-        //             // $pointer = array(
-        //             //     'holiday' => $holiday_date,
-        //             //     'weekday' => $single_holiday->date->dayOfWeek,
-        //             // );
-        //             $pointer = $single_holiday;
-        //             $row_count += 1;
-        //         // }
-
-        //         if ( $single_holiday->date->dayOfWeek == 7 ) {
-        //             $row_count += 1;
-
-        //             $prev_date = strtotime('-1 day', $holiday_date);
-
-        //             // (check for extra working days)
-        //             if ( !empty($grouped_extra_working_days) && isset($grouped_extra_working_days[$month_name]) ) {
-        //                 foreach ($grouped_extra_working_days[$month_name] as $single_workday) {
-        //                     // foreach ($workday_group as $single_workday) {
-        //                         $workday_date = strtotime(get_formated_date($single_workday));
-        //                         if ( $workday_date == $prev_date ) {
-        //                             $row_count -= 1;
-        //                             break;
-        //                         }
-        //                     // }
-        //                 }
-        //             }
-        //             // else {
-        //             //     $row_count += 1;
-        //             // }
-        //         } else if ( $single_holiday->date->dayOfWeek == 1 ) {
-        //             $row_count += 2;
-
-        //             if ( !empty($grouped_extra_working_days) && isset($grouped_extra_working_days[$month_name]) ) {
-        //                 for ($i=1; $i < 3; $i++) { 
-        //                     $prev_date = strtotime('-'.$i.' day', $holiday_date);
-
-        //                     foreach ($grouped_extra_working_days[$month_name] as $single_workday) {
-
-        //                             $workday_date = strtotime(get_formated_date($single_workday));
-        //                             if ( $workday_date == $prev_date ) {
-        //                                 $row_count -= 1;
-        //                                 break;
-        //                             }
-
-        //                     }
-
-        //                 }
-        //             }
-        //         }
-
-        //     } else {
-
-        //         $next_date = strtotime('+1 day', $holiday_date);
-
-        //         if ( $holiday_date == $next_date ) {
-        //             // $pointer = array(
-        //             //     'date' => $holiday_date,
-        //             //     'weekday' => $single_holiday->date->dayOfWeek,
-        //             // );
-        //             $pointer = $single_holiday;
-        //             $row_count += 1;
-        //         } else {
-
-
-
-        //             // $pointer = array(
-        //             //     'date' => $holiday_date,
-        //             //     'weekday' => $single_holiday->date->dayOfWeek,
-        //             // );
-        //             $pointer = $single_holiday;
-        //             $row_count = 1;
-
-        //             // jānočeko vai sestdiena/svētdiena
-        //             // jānočeko vai extra_working_day (jānočeko tikai kad čeko sestd vai sv)
-        //         }
-        //     }
-        // }
-
-        // if ( $row_count > $free_days_in_row ) {
-        //     $free_days_in_row = $row_count;
-        // }
     }
 
     return $free_days_in_row;
