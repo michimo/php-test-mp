@@ -1,7 +1,7 @@
 /*
 /*/
 !index.php
-!functions.php
-!helpers.php
+!/incl
+!/js
 !.gitignore
 !README.md
